@@ -22,3 +22,15 @@
     + score: **0.05739**
     + 제출파일: submission_catboost_optuna_20250526_173823.csv
 
+- 세번째 제출
+    + ```ml3.py```
+    + BMI = Weight / (Height/100)^2 파생 변수를 추가하고,
+    + 기존 Optuna에서 저장된 best_params.json을 이용해 CatBoost와 LightGBM 모델을 모두 학습한 후,
+    + RMSLE가 더 낮은 모델을 선정
+    + 출력결과:
+        - CatBoost RMSLE: 0.05919
+        - LightGBM RMSLE: 0.06211
+    + score: 0.05746
+    + 제출파일: submission_bmi_catboost_20250526_222929.csv
+
+    
