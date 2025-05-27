@@ -6,8 +6,8 @@ from sklearn.preprocessing import StandardScaler
 
 def load_and_preprocess():
     # 데이터 로딩
-    train = pd.read_csv("train.csv")
-    test = pd.read_csv("test.csv")
+    train = pd.read_csv("data/train.csv")
+    test = pd.read_csv("data/test.csv")
 
     # One-hot encoding for 'Sex'
     train = pd.concat([train.drop("Sex", axis=1), pd.get_dummies(train["Sex"], prefix="Sex")], axis=1)

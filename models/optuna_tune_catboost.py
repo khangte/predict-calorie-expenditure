@@ -10,7 +10,7 @@ from sklearn.metrics import mean_squared_log_error
 from sklearn.preprocessing import StandardScaler
 
 # 데이터 로딩
-train = pd.read_csv("train.csv")
+train = pd.read_csv("data/train.csv")
 train = pd.concat([train.drop('Sex', axis=1), pd.get_dummies(train['Sex'], prefix='Sex')], axis=1)
 
 numeric_features = ['Age', 'Height', 'Weight', 'Duration', 'Heart_Rate', 'Body_Temp']
@@ -42,7 +42,7 @@ def objective(trial):
 study = optuna.create_study(direction="minimize")
 study.optimize(objective, n_trials=30)
 
-with open("best_params_catboost.json", "w") as f:
+with open("data/best_params_catboost.json", "w") as f:
     json.dump(study.best_params, f)
 
 print("\u2705 저장 완료:", study.best_params)

@@ -8,8 +8,8 @@ from sklearn.preprocessing import StandardScaler
 from datetime import datetime
 
 # 데이터 로딩
-train = pd.read_csv("train.csv")
-test = pd.read_csv("test.csv")
+train = pd.read_csv("data/train.csv")
+test = pd.read_csv("data/test.csv")
 train = pd.concat([train.drop('Sex', axis=1), pd.get_dummies(train['Sex'], prefix='Sex')], axis=1)
 test = pd.concat([test.drop('Sex', axis=1), pd.get_dummies(test['Sex'], prefix='Sex')], axis=1)
 for col in ['Sex_female', 'Sex_male']:
@@ -34,7 +34,7 @@ X_test = pd.concat([
 ], axis=1)
 
 # 저장된 최적 파라미터 불러오기
-with open("best_params_catboost.json", "r") as f:
+with open("data/best_params_catboost.json", "r") as f:
     best_params = json.load(f)
 best_params["random_seed"] = 42
 best_params["logging_level"] = "Silent"
@@ -51,6 +51,6 @@ submission = pd.DataFrame({
     'Calories': test_pred
 })
 current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-filename = f"submission_catboost_optuna_{current_time}.csv"
+filename = f"submissions/submission_catboost_optuna_{current_time}.csv"
 submission.to_csv(filename, index=False)
 print(f"\U0001F4C1 제출 파일 저장 완료: {filename}")

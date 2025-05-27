@@ -12,8 +12,8 @@ from sklearn.metrics import mean_squared_log_error
 from datetime import datetime
 
 # 데이터 로딩
-train = pd.read_csv("train.csv")
-test = pd.read_csv("test.csv")
+train = pd.read_csv("data/train.csv")
+test = pd.read_csv("data/test.csv")
 
 # 성별 분할
 groups = ['male', 'female']
@@ -38,16 +38,16 @@ for gender in groups:
     X_train, X_val, y_train, y_val = train_test_split(X_full, y_full, test_size=0.2, random_state=42)
 
     # 파라미터 로딩
-    with open("best_params_catboost.json") as f:
+    with open("data/best_params_catboost.json") as f:
         best_params_cat = json.load(f)
     best_params_cat["random_seed"] = 42
     best_params_cat["logging_level"] = "Silent"
 
-    with open("best_params_lgb.json") as f:
+    with open("data/best_params_lgb.json") as f:
         best_params_lgb = json.load(f)
     best_params_lgb["random_state"] = 42
 
-    with open("best_params_xgb.json") as f:
+    with open("data/best_params_xgb.json") as f:
         best_params_xgb = json.load(f)
     best_params_xgb["random_state"] = 42
 
@@ -78,7 +78,7 @@ for gender in groups:
 # 전체 병합 후 저장
 submission = pd.concat(all_preds).sort_values("id")
 current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-filename = f"submission_gender_split_{current_time}.csv"
+filename = f"submissions/submission_gender_split_{current_time}.csv"
 submission.to_csv(filename, index=False)
 print(f"\n✅ 성별 분리 제출 파일 저장 완료: {filename}")
 

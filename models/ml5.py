@@ -11,8 +11,8 @@ from sklearn.model_selection import train_test_split
 from datetime import datetime
 
 # 데이터 로딩
-train = pd.read_csv("train.csv")
-test = pd.read_csv("test.csv")
+train = pd.read_csv("data/train.csv")
+test = pd.read_csv("data/test.csv")
 
 # One-hot encoding
 train = pd.concat([train.drop('Sex', axis=1), pd.get_dummies(train['Sex'], prefix='Sex')], axis=1)
@@ -40,16 +40,16 @@ X_test = pd.concat([
 ], axis=1)
 
 # 최적 파라미터 불러오기
-with open("best_params_catboost.json", "r") as f:
+with open("data/best_params_catboost.json", "r") as f:
     best_params_cat = json.load(f)
 best_params_cat["random_seed"] = 42
 best_params_cat["logging_level"] = "Silent"
 
-with open("best_params_lgb.json", "r") as f:
+with open("data/best_params_lgb.json", "r") as f:
     best_params_lgb = json.load(f)
 best_params_lgb["random_state"] = 42
 
-with open("best_params_xgb.json", "r") as f:
+with open("data/best_params_xgb.json", "r") as f:
     best_params_xgb = json.load(f)
 best_params_xgb["random_state"] = 42
 
@@ -76,6 +76,6 @@ submission = pd.DataFrame({
     'Calories': blended_pred
 })
 current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-filename = f"submission_catboost_blended_{current_time}.csv"
+filename = f"submissions/submission_catboost_blended_{current_time}.csv"
 submission.to_csv(filename, index=False)
 print(f"\U0001F4C1 제출 파일 저장 완료: {filename}")

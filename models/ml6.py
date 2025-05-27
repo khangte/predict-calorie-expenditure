@@ -13,16 +13,16 @@ from datetime import datetime
 X, y, X_test, test_ids = load_and_preprocess()
 
 # 최적 파라미터 불러오기
-with open("best_params_catboost.json", "r") as f:
+with open("data/best_params_catboost.json", "r") as f:
     best_params_cat = json.load(f)
 best_params_cat["random_seed"] = 42
 best_params_cat["logging_level"] = "Silent"
 
-with open("best_params_lgb.json", "r") as f:
+with open("data/best_params_lgb.json", "r") as f:
     best_params_lgb = json.load(f)
 best_params_lgb["random_state"] = 42
 
-with open("best_params_xgb.json", "r") as f:
+with open("data/best_params_xgb.json", "r") as f:
     best_params_xgb = json.load(f)
 best_params_xgb["random_state"] = 42
 
@@ -50,6 +50,6 @@ submission = pd.DataFrame({
     'Calories': blended_pred
 })
 current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-filename = f"submission_weighted_blend_{current_time}.csv"
+filename = f"submissions/submission_weighted_blend_{current_time}.csv"
 submission.to_csv(filename, index=False)
 print(f"\U0001F4C1 제출 파일 저장 완료: {filename}")

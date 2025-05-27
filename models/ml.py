@@ -23,8 +23,8 @@ plt.rcParams['font.family'] = 'Malgun Gothic' #  Windows 'Malgun Gothic'
 plt.rcParams['axes.unicode_minus'] = False
 
 # 데이터 로딩
-train = pd.read_csv("train.csv")
-test = pd.read_csv("test.csv")
+train = pd.read_csv("data/train.csv")
+test = pd.read_csv("data/test.csv")
 # 결측치 확인
 assert train.isnull().sum().sum() == 0
 assert test.isnull().sum().sum() == 0
@@ -158,5 +158,5 @@ submission = pd.DataFrame({
 
 # 현재 날짜와 시간을 파일명에 포함
 current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-submission.to_csv(f"submission_{best_model_name}_{current_time}.csv", index=False)
-print(f"📁 제출 완료: submission_{best_model_name}_{current_time}.csv")
+submission.to_csv(f"submissions/submission_{best_model_name}_{current_time}.csv", index=False)
+print(f"📁 제출 완료: submissions/submission_{best_model_name}_{current_time}.csv")

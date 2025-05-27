@@ -1,3 +1,5 @@
+# ml10_sexbmi_split.py - 성별 + BMI 기반 분할 학습 및 예측 결합
+
 import json
 import pandas as pd
 import numpy as np
@@ -9,47 +11,55 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_log_error
 from datetime import datetime
 
-# 성별 + BMI 2구간 그룹화 (총 4개 그룹)
+# BMI 그룹화 함수
 def get_bmi_group(sex, bmi):
-    if bmi < 25:
-        return f"{sex}_low"
+    if bmi < 18.5:
+        return f"{sex}_under"
+    elif bmi < 25:
+        return f"{sex}_normal"
+    elif bmi < 30:
+        return f"{sex}_over"
     else:
-        return f"{sex}_high"
+        return f"{sex}_obese"
 
-# 데이터 로딩 및 그룹 생성
-train = pd.read_csv("train.csv")
-test = pd.read_csv("test.csv")
-train["BMI"] = train["Weight"] / (train["Height"] / 100) ** 2
-test["BMI"] = test["Weight"] / (test["Height"] / 100) ** 2
-train["group"] = train.apply(lambda row: get_bmi_group(row["Sex"], row["BMI"]), axis=1)
-test["group"] = test.apply(lambda row: get_bmi_group(row["Sex"], row["BMI"]), axis=1)
+# 데이터 로딩
+train = pd.read_csv("data/train.csv")
+test = pd.read_csv("data/test.csv")
+
+# BMI 계산 및 그룹 생성
+train['BMI'] = train['Weight'] / (train['Height'] / 100) ** 2
+test['BMI'] = test['Weight'] / (test['Height'] / 100) ** 2
+train['group'] = train.apply(lambda row: get_bmi_group(row['Sex'], row['BMI']), axis=1)
+test['group'] = test.apply(lambda row: get_bmi_group(row['Sex'], row['BMI']), axis=1)
 
 # 공통 설정
 numeric_features = ['Age', 'Height', 'Weight', 'Duration', 'Heart_Rate', 'Body_Temp']
 w_cat, w_lgb, w_xgb = 0.3364, 0.3326, 0.3310
 
-# 최적 파라미터 로딩
-with open("best_params_catboost.json") as f:
+# 최적 파라미터 불러오기
+with open("data/best_params_catboost.json") as f:
     best_params_cat = json.load(f)
 best_params_cat["random_seed"] = 42
 best_params_cat["logging_level"] = "Silent"
 
-with open("best_params_lgb.json") as f:
+with open("data/best_params_lgb.json") as f:
     best_params_lgb = json.load(f)
 best_params_lgb["random_state"] = 42
 
-with open("best_params_xgb.json") as f:
+with open("data/best_params_xgb.json") as f:
     best_params_xgb = json.load(f)
 best_params_xgb["random_state"] = 42
 
 # 그룹별 처리
 all_preds = []
-rmsle_list = []
+group_list = train['group'].unique()
 
-for group in sorted(train['group'].unique()):
+for group in sorted(group_list):
     print(f"\n📂 그룹: {group}")
-    train_group = train[train["group"] == group].copy()
-    test_group = test[test["group"] == group].copy()
+
+    # 그룹 필터링
+    train_group = train[train['group'] == group].copy()
+    test_group = test[test['group'] == group].copy()
 
     # 스케일링
     scaler = StandardScaler()
@@ -57,7 +67,7 @@ for group in sorted(train['group'].unique()):
     y = np.log1p(train_group['Calories'])
     X_test = pd.DataFrame(scaler.transform(test_group[numeric_features]), columns=numeric_features)
 
-    # 검증용 RMSLE 계산
+    # 검증용 RMSLE 평가
     X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
 
     cat = CatBoostRegressor(**best_params_cat).fit(X_train, y_train)
@@ -69,9 +79,8 @@ for group in sorted(train['group'].unique()):
     y_pred_actual = np.expm1(y_pred_log)
     rmsle = np.sqrt(mean_squared_log_error(y_val_actual, y_pred_actual))
     print(f"📊 RMSLE: {rmsle:.5f}")
-    rmsle_list.append(rmsle)
 
-    # 전체 학습 후 테스트 예측
+    # 전체 데이터로 재학습 후 테스트 예측
     cat = CatBoostRegressor(**best_params_cat).fit(X, y)
     lgb = LGBMRegressor(**best_params_lgb).fit(X, y)
     xgb = XGBRegressor(**best_params_xgb).fit(X, y)
@@ -85,12 +94,9 @@ for group in sorted(train['group'].unique()):
     })
     all_preds.append(df)
 
-# 병합 및 저장
+# 병합 후 저장
 submission = pd.concat(all_preds).sort_values("id")
-filename = f"submission_sexbmi_2group_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+filename = f"submissions/submission_sexbmi_split_{current_time}.csv"
 submission.to_csv(filename, index=False)
-
-# 전체 평균 RMSLE 출력
-mean_rmsle = np.mean(rmsle_list)
-print(f"\n📈 전체 평균 RMSLE: {mean_rmsle:.5f}")
-print(f"✅ 제출 파일 저장 완료: {filename}")
+print(f"\n✅ 제출 파일 저장 완료: {filename}")

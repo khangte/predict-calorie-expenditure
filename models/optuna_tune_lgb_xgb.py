@@ -11,7 +11,7 @@ from lightgbm import LGBMRegressor
 from xgboost import XGBRegressor
 
 # 데이터 로딩 및 전처리
-train = pd.read_csv("train.csv")
+train = pd.read_csv("data/train.csv")
 train["BMI"] = train["Weight"] / ((train["Height"] / 100) ** 2)
 train = pd.concat([train.drop('Sex', axis=1), pd.get_dummies(train['Sex'], prefix='Sex')], axis=1)
 
@@ -60,7 +60,7 @@ def objective_xgb(trial):
 print("\n🎯 LightGBM 튜닝 시작...")
 study_lgb = optuna.create_study(direction="minimize")
 study_lgb.optimize(objective_lgb, n_trials=30)
-with open("best_params_lgb.json", "w") as f:
+with open("data/best_params_lgb.json", "w") as f:
     json.dump(study_lgb.best_params, f)
 print("✅ LightGBM 최적 파라미터 저장 완료")
 
@@ -68,6 +68,6 @@ print("✅ LightGBM 최적 파라미터 저장 완료")
 print("\n🎯 XGBoost 튜닝 시작...")
 study_xgb = optuna.create_study(direction="minimize")
 study_xgb.optimize(objective_xgb, n_trials=30)
-with open("best_params_xgb.json", "w") as f:
+with open("data/best_params_xgb.json", "w") as f:
     json.dump(study_xgb.best_params, f)
 print("✅ XGBoost 최적 파라미터 저장 완료")
