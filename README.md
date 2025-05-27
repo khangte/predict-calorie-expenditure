@@ -3,7 +3,7 @@
 
 ---
 
-- 첫 번째 제출
+- 첫 번째 실험
     + ```ml.py```
         - [다중회귀, 결정트리, 경사하강법, LightGBM, XGBoost, CatBoost, 딥러닝]
         - 위 7가지 방법 중 RMSLE가 가장 낮은 모델 선택
@@ -12,7 +12,7 @@
     + score: **0.05755**
     + 제출파일: submission_CatBoost_20250526_163800.csv
 
-- 두번째 제출
+- 두번째 실험
     + ```ml2.py```+```optuna_tune_catboost.py```
     + ```Optuna``` 사용
         - '첫번째 제출'에서 선정된 모델(catboost)의 하이퍼파라미터를 자동으로 조합
@@ -22,7 +22,7 @@
     + score: **0.05739** (성능 향상)
     + 제출파일: `submission_catboost_optuna_20250526_173823.csv`
 
-- 세번째 제출
+- 세번째 실험
     + ```ml3.py```
     + BMI 파생 변수 추가, Optuna 튜닝된 CatBoost + LightGBM 비교
     + 더 낮은 RMSLE 모델 선택 (CatBoost)
@@ -32,7 +32,7 @@
     + score: **0.05746** (성능 미세 하락)
     + 제출파일: `submission_bmi_catboost_20250526_222929.csv`
 
-- 네 번째 제출
+- 네 번째 실험
     + `ml4.py`
     + BMI = Weight / (Height/100)^2 파생 변수 추가
     + Optuna에서 저장된 최적 하이퍼파라미터(`best_params_catboost.json`, `best_params_lgb.json`, `best_params_xgb.json`)를 이용해
@@ -46,7 +46,7 @@
     + 최종 Score: **0.05746** (이전과 동일)
     + 제출 파일: `submission_bmi_catboost_20250527_120910.csv`
 
-- 다섯 번째 제출
+- 다섯 번째 실험
     + `ml5.py`
     + Optuna를 통해 튜닝한 `best_params_catboost.json`을 기반으로 CatBoost, LightGBM, XGBoost 세 모델을 학습
     + 각각의 예측 결과를 log 스케일에서 평균내어 블렌딩 수행
@@ -64,7 +64,7 @@
         - 반환값: `X`, `y`, `X_test`, `test_ids`
     + 모든 `ml*.py`에서 코드 중복 제거 및 재사용성 극대화
 
-- 여섯 번째 제출
+- 여섯 번째 실험
     + `ml6.py`
     + Optuna로 튜닝된 `best_params_catboost.json`, `best_params_lgb.json`, `best_params_xgb.json`을 각각 불러와 모델 학습
     + CatBoost, LightGBM, XGBoost 모델의 예측 결과를 **정규화된 RMSLE 기준으로 가중 평균 블렌딩**
@@ -76,7 +76,7 @@
     + score: **0.05713** (이전과 동일)
     + 제출 파일: `submission_weighted_blend_20250527_122812.csv`
 
-- 일곱 번째 제출
+- 일곱 번째 실험
     + `ml7_kfold_blend.py`
     + KFold(n_splits=5) 기반으로 CatBoost, LightGBM, XGBoost 모델을 각각 fold별 학습
     + 각 모델의 Fold 예측 결과를 평균한 후,
@@ -89,7 +89,7 @@
     + 최고 score: **0.05703** (성능 향상)
     + 제출 파일: `submission_kfold_blend_20250527_124155.csv`
 
-- 여덟 번째 제출
+- 여덟 번째 실험
     + `ml8_stacking.py`
     + CatBoost, LightGBM, XGBoost 모델을 대상으로 KFold(n=5)로 OOF(Out-of-Fold) 예측 생성
     + 각 모델의 OOF 예측값을 수집하여 메타 모델 입력 피처(`stack_X`) 구성
@@ -104,7 +104,7 @@
     + 성별 분할 (male/female) 별로 모델 학습 후 병합
     + 남성의 RMSLE 높음 (0.06851) → 전체 성능 낮음 가능성
 
-- 열 번째 제출
+- 열 번째 실험
     + `ml10_sexbmi_split.py`
     + BMI = Weight / (Height/100)^2 계산 후,
       성별(Sex) + BMI 구간을 조합하여 **8개 그룹**으로 분할
