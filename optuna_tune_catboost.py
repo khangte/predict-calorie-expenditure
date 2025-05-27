@@ -42,7 +42,7 @@ def objective(trial):
 study = optuna.create_study(direction="minimize")
 study.optimize(objective, n_trials=30)
 
-with open("best_params.json", "w") as f:
+with open("best_params_catboost.json", "w") as f:
     json.dump(study.best_params, f)
 
 print("\u2705 저장 완료:", study.best_params)
