@@ -1,4 +1,4 @@
-# ml2.py - 저장된 best_params.json을 사용해 학습 및 제출 파일 생성
+# ml2.py - 저장된 best_params_catboost.json을 사용해 학습 및 제출 파일 생성
 
 import json
 import pandas as pd
@@ -10,6 +10,7 @@ from datetime import datetime
 # 데이터 로딩
 train = pd.read_csv("data/train.csv")
 test = pd.read_csv("data/test.csv")
+
 train = pd.concat([train.drop('Sex', axis=1), pd.get_dummies(train['Sex'], prefix='Sex')], axis=1)
 test = pd.concat([test.drop('Sex', axis=1), pd.get_dummies(test['Sex'], prefix='Sex')], axis=1)
 for col in ['Sex_female', 'Sex_male']:

@@ -13,6 +13,7 @@ from xgboost import XGBRegressor
 from sklearn.linear_model import RidgeCV
 from sklearn.model_selection import KFold
 from sklearn.ensemble import RandomForestRegressor
+
 from preprocess.preprocess import load_and_preprocess
 from utils.evaluations import evaluate
 
@@ -33,6 +34,10 @@ with open("data/best_params_xgb.json") as f:
     best_params_xgb = json.load(f)
 best_params_xgb["random_state"] = 42
 
+with open("data/best_params_randomforest.json") as f:
+    best_params_rf = json.load(f)
+best_params_rf["n_jobs"] = -1
+
 # k-fold 개수 지정
 fold_cnt = 5
 
@@ -40,8 +45,8 @@ fold_cnt = 5
 kf = KFold(n_splits=fold_cnt, shuffle=True, random_state=42)
 
 # OOF & Test 예측 저장
-oof_cat, oof_lgb, oof_xgb = np.zeros(len(X)), np.zeros(len(X)), np.zeros(len(X))
-test_pred_cat, test_pred_lgb, test_pred_xgb = [], [], []
+oof_cat, oof_lgb, oof_xgb, oof_rf = np.zeros(len(X)), np.zeros(len(X)), np.zeros(len(X)), np.zeros(len(X))
+test_pred_cat, test_pred_lgb, test_pred_xgb, test_pred_rf = [], [], [], []
 
 for fold, (train_idx, val_idx) in enumerate(kf.split(X)):
     print(f"\n🔄 Fold {fold+1}/{fold_cnt}")
@@ -66,17 +71,22 @@ for fold, (train_idx, val_idx) in enumerate(kf.split(X)):
     oof_xgb[val_idx] = xgb.predict(X_val)
     test_pred_xgb.append(xgb.predict(X_test))
 
+    # RandomForest
+    rf = RandomForestRegressor(**best_params_rf)
+    rf.fit(X_train, y_train)
+    oof_rf[val_idx] = rf.predict(X_val)
+    test_pred_rf.append(rf.predict(X_test))
+
 # 메타모델 학습
-stack_X = np.vstack([oof_cat, oof_lgb, oof_xgb]).T
+stack_X = np.vstack([oof_cat, oof_lgb, oof_xgb, oof_rf]).T
 stack_X_test = np.vstack([
     np.mean(test_pred_cat, axis=0),
     np.mean(test_pred_lgb, axis=0),
-    np.mean(test_pred_xgb, axis=0)
+    np.mean(test_pred_xgb, axis=0),
+    np.mean(test_pred_rf, axis=0)
 ]).T
 
 meta_model = RidgeCV(alphas=[0.1, 1.0, 10.0])
-# meta_model = RandomForestRegressor(n_estimators=100, random_state=42)
-
 meta_model.fit(stack_X, y)
 
 # 평가 지표 출력

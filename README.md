@@ -39,12 +39,13 @@
     + CatBoost, LightGBM, XGBoost 모델을 모두 학습
     + 검증 데이터에서 RMSLE가 가장 낮은 모델을 자동으로 선정
     + 출력 결과:
-        - CatBoost RMSLE:  0.05919 <= 이전 결과랑 같아서 제출안함
+        - CatBoost RMSLE:  0.05919 <= 이전 결과 동일
         - LightGBM RMSLE: 0.05995
         - XGBoost RMSLE:  0.06022
     + 선택된 모델: **CatBoost**
     + 최종 Score: **0.05746** (이전과 동일)
     + 제출 파일: `submission_bmi_catboost_20250527_120910.csv`
+    + 미제출
 
 - 다섯 번째 실험
     + `ml5.py`
@@ -53,16 +54,6 @@
     + 출력 결과 (개별 모델 RMSLE는 측정하지 않음, 블렌딩 기반 제출): - blending 방식: (CatBoost + LightGBM + XGBoost) / 3
     + score: **0.05713** (성능 미세 향상)
     + 제출 파일: `submission_catboost_blended_20250526_1759.csv`
-
-- 공통 전처리 함수 정의
-    + `preprocess.py`
-    + `load_and_preprocess()` 함수 하나로 전처리 자동화
-        - train/test 로딩
-        - 성별 One-Hot 인코딩
-        - 수치형 피처 스케일링
-        - `np.log1p()`로 타깃 변환
-        - 반환값: `X`, `y`, `X_test`, `test_ids`
-    + 모든 `ml*.py`에서 코드 중복 제거 및 재사용성 극대화
 
 - 여섯 번째 실험
     + `ml6.py`
@@ -124,3 +115,48 @@
     + 전체 평균 RMSLE: **0.05948**
     + 이전 stacking 방식보다 낮은 성능
     + group 수를 줄였는데도 성능 하락
+
+- 열두 번째 실험: Stacking 앙상블 fold 5->10 증가
+    - **파일명**: `ml8_stacking.py`
+    - **모델**: CatBoost, LightGBM, XGBoost + RidgeCV (메타모델)
+    - **전처리**: `preprocess.py`에서 공통 전처리 함수 사용
+    - **튜닝**: 각 모델별로 Optuna를 활용한 best_params 적용
+    - **앙상블 방식**:
+    - `KFold(n_splits=10)`로 훈련 데이터를 분할하여 OOF 예측 수행
+        - 각 모델의 OOF 결과를 메타모델(RidgeCV) 학습에 사용
+        - 테스트 데이터는 각 모델의 예측값을 평균내어 메타모델에 입력
+    - **성능 평가**: `utils/evaluations.py`의 `evaluate()` 함수로 전체 RMSLE 출력
+    - **결과**:
+        - 최종 RMSLE: **0.0592** (성능 하락)
+        - 제출 파일: `submission_stacking_20250528_XXXXXX.csv` (날짜 및 시간 자동 생성)
+    - **비고**:
+        - 기존 5-Fold → 10-Fold로 증가시켜 일반화 성능 개선 유도
+        - 3개 모델의 예측을 결합해 강건한 앙상블 효과 기대
+    - 미제출
+
+### 🔬 열세 번째 실험
+- **파일명**: `ml13_stacking_with_rf.py`
+- **주요 특징**:
+  - 기존 stacking 모델(`CatBoost`, `LightGBM`, `XGBoost`)에 `RandomForestRegressor` 추가
+  - 총 4개 모델의 OOF(Out-of-Fold) 예측값을 메타 특성으로 사용
+  - 메타모델로 `RidgeCV` 사용
+  - `KFold(n_splits=7)`로 교차검증 수행
+
+- **변경 사항**:
+  - 기존 3개 모델에 더해 `RandomForest`의 예측값을 stacking 입력에 추가
+  - `utils.evaluations.evaluate` 함수로 RMSLE 출력 추가
+
+- **성능 결과**:
+  - RMSLE: **0.05917**
+  - 기존 실험(`ml8_stacking.py`)과 동일한 결과
+
+- **제출 파일**:
+  - `submission_stacking_rf_YYYYMMDD_HHMMSS.csv`
+
+- **해석**:
+  - `RandomForest`를 stacking에 추가했지만 성능 향상은 없었음
+  - 기존 모델들이 비슷한 예측 경향을 가져 메타모델에 기여하지 못한 것으로 보임
+  - 다양한 구조/성격의 모델을 더하거나, 다른 메타모델을 고려할 필요 있음
+
+### 열네 번째 실험
+- 

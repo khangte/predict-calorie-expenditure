@@ -1,27 +1,20 @@
 # optuna_tune.py - 최적 파라미터 탐색 후 저장
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import optuna
 import json
-import pandas as pd
+import time
 import numpy as np
 from catboost import CatBoostRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_log_error
-from sklearn.preprocessing import StandardScaler
+
+from preprocess.preprocessing_v2 import load_and_preprocess
 
 # 데이터 로딩
-train = pd.read_csv("data/train.csv")
-train = pd.concat([train.drop('Sex', axis=1), pd.get_dummies(train['Sex'], prefix='Sex')], axis=1)
-
-numeric_features = ['Age', 'Height', 'Weight', 'Duration', 'Heart_Rate', 'Body_Temp']
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(train[numeric_features])
-X = pd.concat([
-    pd.DataFrame(X_scaled, columns=numeric_features),
-    train[['Sex_female', 'Sex_male']]
-], axis=1)
-y = np.log1p(train['Calories'])
-
+X, y, _, _ = load_and_preprocess()
 X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
 
 def objective(trial):
@@ -37,12 +30,26 @@ def objective(trial):
     model.fit(X_train, y_train)
     y_pred = np.expm1(model.predict(X_val))
     y_true = np.expm1(y_val)
+
     return np.sqrt(mean_squared_log_error(y_true, y_pred))
 
+# 튜닝 시작 시간
+start_time = time.time()
+
+# 스터디 실행
 study = optuna.create_study(direction="minimize")
 study.optimize(objective, n_trials=30)
 
+# 튜닝 종료 시간 및 소요시간 출력
+end_time = time.time()
+elapsed_time = end_time - start_time
+print(f"⏱️ 튜닝 소요 시간: {elapsed_time:.2f}초")
+
+# 결과 출력 및 저장
+print("Best RMSLE:", study.best_value)
+print("Best Parameters:", study.best_params)
+
 with open("data/best_params_catboost.json", "w") as f:
-    json.dump(study.best_params, f)
+    json.dump(study.best_params, f, indent=4)
 
 print("\u2705 저장 완료:", study.best_params)
