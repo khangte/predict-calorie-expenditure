@@ -18,3 +18,4 @@ ml-dtypes
 tensorflow-cpu
 tensorflow
 optuna
+scikit-optimize
