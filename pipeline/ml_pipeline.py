@@ -23,6 +23,7 @@ import xgboost as xgb
 import lightgbm as lgb
 import warnings
 import joblib
+from feature_engineering import generate_features
 
 warnings.filterwarnings('ignore', category=UserWarning, module='lightgbm')
 warnings.filterwarnings("ignore", message="X does not have valid feature names")
@@ -33,6 +34,9 @@ test = pd.read_csv("data/test.csv")
 
 # log1p 적용 (RMSLE 평가 기준)
 train["Calories"] = np.log1p(train["Calories"])
+
+train = generate_features(train)
+test = generate_features(test)
 
 # 컬럼 선택
 drop_cols = ['id', 'Calories']
@@ -46,6 +50,7 @@ main_features = numeric_feats + categorical_feats
 # 훈련/검증 데이터 분할
 y = train['Calories']
 X = train[main_features]
+
 X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # 수치형 변수 전처리 파이프라인 구성
@@ -69,15 +74,15 @@ models = {
     # 'Ridge': Ridge(),
     # 'Lasso': Lasso(),
     # 'ElasticNet': ElasticNet(),
-    # 'XGBoost': xgb.XGBRegressor(tree_method='hist', random_state=42),
-    # 'LightGBM': lgb.LGBMRegressor(random_state=42, verbosity=-1),
-    # 'CatBoost': CatBoostRegressor(verbose=0, random_state=42)
+    'XGBoost': xgb.XGBRegressor(tree_method='hist', random_state=42),
+    'LightGBM': lgb.LGBMRegressor(random_state=42, verbosity=-1),
+    'CatBoost': CatBoostRegressor(verbose=0, random_state=42)
     # 'RandomForest': RandomForestRegressor(n_estimators=200, max_depth=10, random_state=42, n_jobs=-1),
     # 'HistGB': HistGradientBoostingRegressor(random_state=42),
     # 'KNN': KNeighborsRegressor(n_neighbors=5),
     # 'SVR' : SVR(C=1.0, epsilon=0.1),
-    'MLP' : MLPRegressor(hidden_layer_sizes=(100, 50), max_iter=1000, random_state=42),
-    'ExtraTrees' : ExtraTreesRegressor(n_estimators=200, random_state=42)
+    # 'MLP' : MLPRegressor(hidden_layer_sizes=(100, 50), max_iter=1000, random_state=42),
+    # 'ExtraTrees' : ExtraTreesRegressor(n_estimators=200, random_state=42)
 
 }
 
