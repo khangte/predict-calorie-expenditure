@@ -1,4 +1,3 @@
-
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -16,41 +15,32 @@ from catboost import CatBoostRegressor
 from lightgbm import LGBMRegressor
 from xgboost import XGBRegressor
 from sklearn.metrics import mean_squared_log_error
-from sklearn.ensemble import HistGradientBoostingRegressor, StackingRegressor, RandomForestRegressor
+from sklearn.ensemble import StackingRegressor
 
-# 데이터 불러오기
+from feature_engineering import generate_features
+
+# 1. 데이터 불러오기 및 피처 엔지니어링
 train = pd.read_csv("data/train.csv")
 test = pd.read_csv("data/test.csv")
 train['Calories'] = np.log1p(train['Calories'])
 
-# 조합 피처 생성
-train['HR_Duration'] = train['Heart_Rate'] * train['Duration']
-train['BT_Duration'] = train['Body_Temp'] * train['Duration']
-test['HR_Duration'] = test['Heart_Rate'] * test['Duration']
-test['BT_Duration'] = test['Body_Temp'] * test['Duration']
+train = generate_features(train)
+test = generate_features(test)
 
-train['BMI'] = train['Weight'] / ((train['Height'] / 100) ** 2)
-train['Temp_per_Duration'] = train['Body_Temp'] / train['Duration']
-test['BMI'] = test['Weight'] / ((test['Height'] / 100) ** 2)
-test['Temp_per_Duration'] = test['Body_Temp'] / test['Duration']
-
-# 피처 구성
-drop_cols = ['id', 'Calories']
+# 2. 피처 구성
 numeric_feats = train.select_dtypes(include=['int64', 'float64']).columns.tolist()
 categorical_feats = train.select_dtypes(include=['object']).columns.tolist()
+drop_cols = ['id', 'Calories']
+
 numeric_feats = [col for col in numeric_feats if col not in drop_cols]
 categorical_feats = [col for col in categorical_feats if col not in drop_cols]
-
-for feat in ['HR_Duration', 'BT_Duration', 'BMI', 'Temp_per_Duration']:
-    if feat not in numeric_feats:
-        numeric_feats.append(feat)
 main_features = numeric_feats + categorical_feats
 
 X = train[main_features]
 y = train['Calories']
 X_test = test[main_features]
 
-# 전처리 정의
+# 3. 전처리 정의
 numeric_transformer = Pipeline([('scaler', StandardScaler())])
 categorical_transformer = Pipeline([('encoder', OneHotEncoder(handle_unknown='ignore'))])
 preprocessor = ColumnTransformer([
@@ -58,11 +48,10 @@ preprocessor = ColumnTransformer([
     ('cat', categorical_transformer, categorical_feats)
 ])
 
-# 최적 파라미터 로딩
+# 4. 최적 파라미터 로딩
 with open("data/best_params_catboost.json") as f:
     best_params_cat = json.load(f)
-best_params_cat["random_seed"] = 42
-best_params_cat["logging_level"] = "Silent"
+best_params_cat.update({"random_seed": 42, "logging_level": "Silent"})
 
 with open("data/best_params_lgb.json") as f:
     best_params_lgb = json.load(f)
@@ -72,16 +61,13 @@ with open("data/best_params_xgb.json") as f:
     best_params_xgb = json.load(f)
 best_params_xgb["random_state"] = 42
 
-# KFold
-fold_cnt = 5
-kf = KFold(n_splits=fold_cnt, shuffle=True, random_state=42)
-
-# 예측 저장
+# 5. 교차 검증 및 예측 저장
+kf = KFold(n_splits=5, shuffle=True, random_state=42)
 oof_cat, oof_lgb, oof_xgb = np.zeros(len(X)), np.zeros(len(X)), np.zeros(len(X))
 test_pred_cat, test_pred_lgb, test_pred_xgb = [], [], []
 
 for fold, (train_idx, val_idx) in enumerate(kf.split(X)):
-    print(f"\n🔄 Fold {fold+1}/{fold_cnt}")
+    print(f"\n🔄 Fold {fold+1}/5")
     X_train, y_train = X.iloc[train_idx], y.iloc[train_idx]
     X_val = X.iloc[val_idx]
 
@@ -110,7 +96,7 @@ for fold, (train_idx, val_idx) in enumerate(kf.split(X)):
     test_pred_lgb.append(lgb_pipe.predict(X_test))
     test_pred_xgb.append(xgb_pipe.predict(X_test))
 
-# 메타모델 학습용 스택 데이터 구성 (+ 예측값 간 차이)
+# 6. 스태킹용 메타 피처 생성
 stack_X = np.vstack([
     oof_cat,
     oof_lgb,
@@ -127,23 +113,20 @@ stack_X_test = np.vstack([
     np.mean(test_pred_xgb, axis=0) - np.mean(test_pred_cat, axis=0)
 ]).T
 
-# 메타모델
+# 7. 메타모델 학습 및 예측
 meta_model = RidgeCV(alphas=[0.1, 1.0, 10.0])
-# meta_model = HistGradientBoostingRegressor(random_state=42)
-
 meta_model.fit(stack_X, y)
 
-# RMSLE 평가
 stack_oof_pred = meta_model.predict(stack_X)
 stack_oof_pred_actual = np.expm1(stack_oof_pred)
 y_actual = np.expm1(y)
 rmsle = np.sqrt(mean_squared_log_error(y_actual, stack_oof_pred_actual))
 print(f"\n📊 Stacking RMSLE (improved): {rmsle:.4f}")
 
-# 최종 예측 및 제출
 stacked_pred_log = meta_model.predict(stack_X_test)
 stacked_pred = np.expm1(stacked_pred_log)
 
+# 8. 제출 파일 생성
 submission = pd.DataFrame({
     "id": test['id'],
     "Calories": stacked_pred
