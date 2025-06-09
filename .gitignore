@@ -5,8 +5,9 @@ __pycache__/
 *.ipynb_checkpoints/
 .venv/
 .env
-.idea
+.idea/
 .DS_Store
+catboost_info/
 submissions/
 submission_*.csv
 catboost_info/

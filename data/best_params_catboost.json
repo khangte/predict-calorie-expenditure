@@ -1,0 +1,6 @@
+{
+    "iterations": 1000,
+    "depth": 8,
+    "learning_rate": 0.11605703822208382,
+    "l2_leaf_reg": 8.74980961421559
+}
