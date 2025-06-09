@@ -1,9 +1,0 @@
-{
-    "n_estimators": 998,
-    "learning_rate": 0.05455420714112705,
-    "max_depth": 8,
-    "num_leaves": 184,
-    "min_child_samples": 16,
-    "subsample": 0.7050990671922829,
-    "colsample_bytree": 0.8119129856427536
-}
