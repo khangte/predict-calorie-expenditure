@@ -9,11 +9,14 @@
 - 선정 실험 : 8번째 실험
 
 ### 실험 요약
-
-- **모델 구성**: (CatBoost + LGBM + XGBoost) → RidgeCV
-- **Stacking 방식**: K-Fold 기반 OOF stacking
-- **Score (RMSLE)**: 가장 낮은 RMSLE을 기록하며 최고의 성능을 보여줌
-- **과적합 방지**: RidgeCV를 통해 간접적인 정규화 및 alpha 조정 수행
+- **베이스 모델**: CatBoost, LightGBM, XGBoost  
+- **메타 모델**: RidgeCV  
+- **Stacking 방식**: K-Fold 기반 OOF stacking (5-Fold)  
+- **하이퍼파라미터 최적화**: Optuna를 이용해 각 베이스 모델의 최적 파라미터 사전 탐색  
+- **파라미터 적용 방식**: JSON 파일로 저장된 Optuna 결과 불러와 각 모델에 적용  
+- **평가 지표**: 로그 스케일 RMSLE 사용  
+- **예측 후처리**: `np.expm1()`으로 로그 예측값을 원래 스케일로 복원  
+- **성능 결과**: 거의 가장 낮은 RMSLE을 기록한 최고의 성능 모델  
 
 ---
 
