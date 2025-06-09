@@ -8,9 +8,16 @@
 - Rank  : **365**/4316
 - 선정 실험 : 8번째 실험
 
+### 실험 요약
+
+- **모델 구성**: (CatBoost + LGBM + XGBoost) → RidgeCV
+- **Stacking 방식**: K-Fold 기반 OOF stacking
+- **Score (RMSLE)**: 가장 낮은 RMSLE을 기록하며 최고의 성능을 보여줌
+- **과적합 방지**: RidgeCV를 통해 간접적인 정규화 및 alpha 조정 수행
+
 ---
 
-## 🔬 첫 번째 실험 (`ml.py`)
+### 🔬 첫 번째 실험 (`ml.py`)
 - 7가지 모델 비교: 다중회귀, 결정트리, 경사하강법, LightGBM, XGBoost, CatBoost, 딥러닝
 - 최종 선택 모델: **CatBoost**
 - **RMSLE**: `0.0595`  
@@ -19,7 +26,7 @@
 
 ---
 
-## 🔬 두 번째 실험 (`ml2.py` + `optuna_tune_catboost.py`)
+### 🔬 두 번째 실험 (`ml2.py` + `optuna_tune_catboost.py`)
 - Optuna를 이용해 CatBoost 하이퍼파라미터 튜닝
 - 30회 모델 학습 → 최적 조합 선택
 - **RMSLE**: `0.0592`  
@@ -28,7 +35,7 @@
 
 ---
 
-## 🔬 세 번째 실험 (`ml3.py`)
+### 🔬 세 번째 실험 (`ml3.py`)
 - `BMI` 파생 변수 추가
 - CatBoost vs LightGBM 비교  
 - 최종 선택: **CatBoost**
@@ -40,7 +47,7 @@
 
 ---
 
-## 🔬 네 번째 실험 (`ml4.py`)
+### 🔬 네 번째 실험 (`ml4.py`)
 - BMI 변수 유지 + Optuna 최적 하이퍼파라미터 적용
 - CatBoost, LightGBM, XGBoost 비교  
 - 최종 선택: **CatBoost**
@@ -53,14 +60,14 @@
 
 ---
 
-## 🔬 다섯 번째 실험 (`ml5.py`)
+### 🔬 다섯 번째 실험 (`ml5.py`)
 - 3개 모델 예측 평균 블렌딩
 - **Score**: `0.05713`  
 - 📄 제출파일: `submission_catboost_blended_20250526_1759.csv`
 
 ---
 
-## 🔬 여섯 번째 실험 (`ml6.py`)
+### 🔬 여섯 번째 실험 (`ml6.py`)
 - 모델별 RMSLE 기반 가중 평균 블렌딩  
 - CatBoost: `0.05919`, LGBM: `0.05995`, XGBoost: `0.06022`
 - **Score**: `0.05713`  
@@ -68,27 +75,27 @@
 
 ---
 
-## 🔬 일곱 번째 실험 (`ml7_kfold_blend.py`)
+### 🔬 일곱 번째 실험 (`ml7_kfold_blend.py`)
 - KFold 기반 모델 예측 + RMSLE 정규화 가중 평균
 - **Score**: `0.05703` ✅ 최고 성능  
 - 📄 제출파일: `submission_kfold_blend_20250527_124155.csv`
 
 ---
 
-## 🔬 여덟 번째 실험 (`ml8_stacking.py`)
+### 🔬 여덟 번째 실험 (`ml8_stacking.py`)
 - KFold OOF → RidgeCV 메타모델로 Stacking
 - **Score**: `0.05698` 🏆 최고 성능  
 - 📄 제출파일: `submission_stacking_20250527_124906.csv`
 
 ---
 
-## 🔬 아홉 번째 실험 (`ml9_gender_split.py`)
+### 🔬 아홉 번째 실험 (`ml9_gender_split.py`)
 - 성별 기반 분할 학습 (남성 RMSLE 0.06851로 성능 하락)
 - 📄 미제출
 
 ---
 
-## 🔬 열 번째 실험 (`ml10_sexbmi_split.py`)
+### 🔬 열 번째 실험 (`ml10_sexbmi_split.py`)
 - 성별 + BMI 구간 조합 (8개 그룹)
 - CatBoost, LGBM, XGBoost + 가중 평균
 - **Score**: `0.05754`  
@@ -96,14 +103,14 @@
 
 ---
 
-## 🔬 열한 번째 실험 (`ml11_sexbmi_2group.py`)
+### 🔬 열한 번째 실험 (`ml11_sexbmi_2group.py`)
 - 성별 + BMI 2구간 → 4개 그룹 분할
 - **RMSLE**: `0.05948`  
 - 📄 미제출
 
 ---
 
-## 🔬 열두 번째 실험 (`ml8_stacking.py`)
+### 🔬 열두 번째 실험 (`ml8_stacking.py`)
 - KFold 5 → 10으로 확장
 - RidgeCV 기반 스태킹  
 - **RMSLE**: `0.0592`  
@@ -111,7 +118,7 @@
 
 ---
 
-## 🔬 열세 번째 실험 (`ml13_stacking_with_rf.py`)
+### 🔬 열세 번째 실험 (`ml13_stacking_with_rf.py`)
 - 기존 모델에 `RandomForest` 추가
 - 메타모델: `RidgeCV`
 - **RMSLE**: `0.05917`  
@@ -119,7 +126,7 @@
 
 ---
 
-## 🔬 열네 번째 실험 (`ml_pipeline_stacking.py`)
+### 🔬 열네 번째 실험 (`ml_pipeline_stacking.py`)
 - 메타모델로 `LGBMRegressor` 사용
 - 조합 특성 추가 (`HR_Duration`, `BT_Duration`)
 - **RMSLE**: `0.0597`  
@@ -127,7 +134,7 @@
 
 ---
 
-## 🔬 열다섯 번째 실험 (`ml_pipeline_stacking_improved.py`)
+### 🔬 열다섯 번째 실험 (`ml_pipeline_stacking_improved.py`)
 - 예측값 차이 피처 (`lgb-cat`, `xgb-cat`) 추가
 - 메타모델: `RidgeCV`
 - **RMSLE**: `0.0593`  
@@ -136,7 +143,7 @@
 
 ---
 
-## 🔬 열여섯 번째 실험 (`ml_pipeline_stacking_improved.py`)
+### 🔬 열여섯 번째 실험 (`ml_pipeline_stacking_improved.py`)
 - 조합 피처: `BMI`, `Temp_per_Duration` 추가
 - 메타모델: `RidgeCV`
 - **RMSLE**: `0.0595`  
@@ -144,7 +151,7 @@
 
 ---
 
-## 🔬 열여덟 번째 실험
+### 🔬 열여덟 번째 실험
 
 - **파일명**: `ml_pipeline_stacking.py`
 - **주요 특징**:
