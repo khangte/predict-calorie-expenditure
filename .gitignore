@@ -8,3 +8,7 @@ __pycache__/
 .DS_Store
 submissions/
 submission_*.csv
+catboost_info/
+*.sh
+data/
+models/

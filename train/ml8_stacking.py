@@ -75,8 +75,6 @@ stack_X_test = np.vstack([
 ]).T
 
 meta_model = RidgeCV(alphas=[0.1, 1.0, 10.0])
-# meta_model = RandomForestRegressor(n_estimators=100, random_state=42)
-
 meta_model.fit(stack_X, y)
 
 # 평가 지표 출력
