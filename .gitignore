@@ -12,5 +12,5 @@ submissions/
 submission_*.csv
 catboost_info/
 *.sh
-data/
+data/*.csv
 models/
