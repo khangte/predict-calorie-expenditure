@@ -5,6 +5,7 @@ __pycache__/
 *.ipynb_checkpoints/
 .venv/
 .env
+.idea
 .DS_Store
 submissions/
 submission_*.csv
