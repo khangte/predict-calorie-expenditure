@@ -41,6 +41,6 @@
 | 13        | `ml13_stacking_with_rf.py`           | RandomForest 추가 + RidgeCV                  | 0.05917 | 0.05945 | `submission_stacking_kf5_20250528_161452.csv`      |
 | 14        | `ml_pipeline.py`            | 메타모델 LGBM, 조합 특성 추가               | 0.0597  | 0.05914 | `submission_20250529_122336.csv`     |
 | 15        | `ml_pipeline_stacking_improved.py`   | 예측값 차이 피처 추가                        | 0.0593  | 0.05708 | `submission_stacking_improved_20250529_162009.csv`|
-| 16        | `ml_pipeline_stacking_improved.py`   | 조합 피처: BMI, Temp_per_Duration 추가       | 0.0595  | 0.05708 | 미제출                                               |
+| 16        | `ml_pipeline_stacking_improved.py`   | 조합 피처: BMI, Temp_per_Duration 추가       | 0.0595  |         | 미제출                                               |
 | 17        | `ml_pipeline_stacking.py`            | StackingRegressor 사용, RidgeCV 메타모델     | 0.0556  | 0.05711 | `submission_stacking_regressor_20250530_112240.csv`         |
 
