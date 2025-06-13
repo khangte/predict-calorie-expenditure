@@ -30,6 +30,7 @@
 ---
 
 ## 결과 파일 구조
+```
 .
 ├── data/ # [not committed]
 │   ├── test.csv
@@ -60,6 +61,7 @@
 │   └── evaluations.py
 │
 └── requirements.txt
+```
 
 ---
 
