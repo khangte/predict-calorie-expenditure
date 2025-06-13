@@ -53,14 +53,14 @@ def objective_xgb(trial):
 start_time = time.time()
 
 # XGBoost 튜닝
-print("\n🎯 XGBoost 튜닝 시작...")
+print("\nXGBoost 튜닝 시작...")
 study = optuna.create_study(direction="minimize")
 study.optimize(objective_xgb, n_trials=30)
 
 # 튜닝 종료 시간 및 소요 시간 출력
 end_time = time.time()
 elapsed_time = end_time - start_time
-print(f"⏱️ 튜닝 소요 시간: {elapsed_time:.2f}초")
+print(f"튜닝 소요 시간: {elapsed_time:.2f}초")
 
 # 결과 출력 및 저장
 print("Best RMSLE:", study.best_value)
@@ -68,4 +68,4 @@ print("Best Parameters:", study.best_params)
 
 with open("data/best_params_xgb.json", "w") as f:
     json.dump(study.best_params, f, indent=4)
-print("✅ XGBoost 최적 파라미터 저장 완료")
+print("XGBoost 최적 파라미터 저장 완료")

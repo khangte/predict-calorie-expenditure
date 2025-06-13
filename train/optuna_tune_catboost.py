@@ -52,7 +52,7 @@ study.optimize(objective, n_trials=30)
 # 튜닝 종료 시간 및 소요시간 출력
 end_time = time.time()
 elapsed_time = end_time - start_time
-print(f"⏱️ 튜닝 소요 시간: {elapsed_time:.2f}초")
+print(f"튜닝 소요 시간: {elapsed_time:.2f}초")
 
 # 결과 출력 및 저장
 print("Best RMSLE:", study.best_value)

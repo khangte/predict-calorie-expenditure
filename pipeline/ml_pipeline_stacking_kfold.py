@@ -84,7 +84,7 @@ oof_cat, oof_lgb, oof_xgb = np.zeros(len(X)), np.zeros(len(X)), np.zeros(len(X))
 test_pred_cat, test_pred_lgb, test_pred_xgb = [], [], []
 
 for fold, (train_idx, val_idx) in enumerate(kf.split(X)):
-    print(f"\n🔄 Fold {fold+1}/{fold_cnt}")
+    print(f"\nFold {fold+1}/{fold_cnt}")
     X_train, y_train = X.iloc[train_idx], y.iloc[train_idx]
     X_val = X.iloc[val_idx]
 
@@ -133,7 +133,7 @@ stack_oof_pred_actual = np.expm1(stack_oof_pred)
 
 y_actual = np.expm1(y)
 rmsle = np.sqrt(mean_squared_log_error(y_actual, stack_oof_pred_actual))
-print(f"\n📊 Stacking RMSLE: {rmsle:.4f}")
+print(f"\nStacking RMSLE: {rmsle:.4f}")
 
 # 테스트 예측 및 저장
 stacked_pred_log = meta_model.predict(stack_X_test)
@@ -146,4 +146,4 @@ submission = pd.DataFrame({
 current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
 filename = f"submissions/submission_stacking_kf{fold_cnt}_{current_time}.csv"
 submission.to_csv(filename, index=False)
-print(f"\n✅ 제출 파일 저장 완료: {filename}")
+print(f"\n제출 파일 저장 완료: {filename}")
