@@ -1,28 +1,69 @@
-# 📊 Predict Calorie Expenditure  
+# Predict Calorie Expenditure (Kaggle Playground Series - Season 5, Episode 5)
+
 [Playground Series - Season 5, Episode 5](https://www.kaggle.com/competitions/playground-series-s5e5/)
 
 ---
 
 ## 최종 결과
-| 항목         | 내용              |
-|--------------|-------------------|
-| Rank         | **365** / 4316        |
-| Score        | 0.05865           |
-| 선정 실험    | 8번째 실험        |
 
+- **최종 점수**: `0.05865`
+- **최종 등수**: `365위` (총 4316팀 참여)
 
-### ✅ 실험 요약
+![alt text](images/캡처.PNG)
+![alt text](images/캡처.PNG)
+
+---
+
+## ✅ 결과 요약
 
 - **베이스 모델**: CatBoost, LightGBM, XGBoost  
-- **메타 모델**: RidgeCV  
+- **메타 모델**: RidgeCV 를 활용한 Stacking Ensemble
 - **Stacking 방식**: K-Fold 기반 OOF stacking (5-Fold)  
 - **하이퍼파라미터 최적화**: Optuna를 이용해 각 베이스 모델의 최적 파라미터 사전 탐색  
-- **파라미터 적용 방식**: JSON 파일로 저장된 Optuna 결과 불러와 각 모델에 적용  
+- **파라미터 적용 방식**: JSON 파일로 저장된 Optuna 결과 불러와 각 모델에 적용
+- **교차 검증 방법**: KFold Cross Validation
+- **주요 전처리**: Standard Scaling, One-hot Encoding
 - **평가 지표**: 로그 스케일 RMSLE 사용  
 - **예측 후처리**: `np.expm1()`으로 로그 예측값을 원래 스케일로 복원  
 - **성능 결과**: 가장 낮은 RMSLE을 기록한 최고의 성능 모델  
 
 ---
+
+## 결과 파일 구조
+.
+├── data/
+│   ├── test.csv
+│   ├── train.csv
+│
+├── best_params/
+│   ├── best_params_catboost.json
+│   ├── best_params_lightgbm.json
+│   └── best_params_xgboost.json
+│
+├── notebooks/
+│   ├── create_pipeline.ipynb
+│   └── eda.ipynb
+│
+├── preprocess/
+│   └── preprocess.py
+│
+├── train/
+│   ├── ml8_stacking.py
+│   ├── optuna_tune_catboost.py
+│   ├── optuna_tune_lightgbm.py
+│   └── optuna_tune_xgboost.py
+│
+├── utils/
+│   └── evaluations.py
+│
+├── submission/
+│   └── submission.csv
+│
+└── requirements.txt
+
+---
+
+## 발전 과정
 
 | 실험 번호 | 파일명                              | 주요 내용                                      | RMSLE   | Score   | 제출 파일명                                        |
 |-----------|--------------------------------------|-----------------------------------------------|---------|---------|---------------------------------------------------|
@@ -43,4 +84,3 @@
 | 15        | `ml_pipeline_stacking_improved.py`   | 예측값 차이 피처 추가                        | 0.0593  | 0.05708 | `submission_stacking_improved_20250529_162009.csv`|
 | 16        | `ml_pipeline_stacking_improved.py`   | 조합 피처: BMI, Temp_per_Duration 추가       | 0.0595  |         | 미제출                                               |
 | 17        | `ml_pipeline_stacking.py`            | StackingRegressor 사용, RidgeCV 메타모델     | 0.0556  | 0.05711 | `submission_stacking_regressor_20250530_112240.csv`         |
-
