@@ -32,7 +32,7 @@
 ## 결과 파일 구조
 ```
 .
-├── data/ # [not committed]
+├── data/ [not committed]
 │   ├── test.csv
 │   └── train.csv
 │
@@ -48,7 +48,7 @@
 ├── preprocess/
 │   └── preprocess.py
 │
-├── submission/ # [not committed]
+├── submission/ [not committed]
 │   └── submission_stacking_20250527_124906.csv
 │
 ├── train/
