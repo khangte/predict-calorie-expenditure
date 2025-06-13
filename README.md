@@ -31,9 +31,9 @@
 
 ## 결과 파일 구조
 .
-├── data/
+├── data/ # [not committed]
 │   ├── test.csv
-│   ├── train.csv
+│   └── train.csv
 │
 ├── best_params/
 │   ├── best_params_catboost.json
@@ -47,6 +47,9 @@
 ├── preprocess/
 │   └── preprocess.py
 │
+├── submission/ # [not committed]
+│   └── submission_stacking_20250527_124906.csv
+│
 ├── train/
 │   ├── ml8_stacking.py
 │   ├── optuna_tune_catboost.py
@@ -55,9 +58,6 @@
 │
 ├── utils/
 │   └── evaluations.py
-│
-├── submission/
-│   └── submission.csv
 │
 └── requirements.txt
 
