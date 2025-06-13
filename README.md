@@ -10,7 +10,7 @@
 - **최종 등수**: `365위` (총 4316팀 참여)
 
 ![alt text](images/캡처.PNG)
-![alt text](images/캡처.PNG)
+![alt text](images/캡처2.PNG)
 
 ---
 
