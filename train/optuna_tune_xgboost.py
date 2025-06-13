@@ -66,6 +66,6 @@ print(f"튜닝 소요 시간: {elapsed_time:.2f}초")
 print("Best RMSLE:", study.best_value)
 print("Best Parameters:", study.best_params)
 
-with open("data/best_params_xgb.json", "w") as f:
+with open("best_params/best_params_xgboost.json", "w") as f:
     json.dump(study.best_params, f, indent=4)
 print("XGBoost 최적 파라미터 저장 완료")

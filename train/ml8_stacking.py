@@ -12,7 +12,6 @@ from lightgbm import LGBMRegressor
 from xgboost import XGBRegressor
 from sklearn.linear_model import RidgeCV
 from sklearn.model_selection import KFold
-from sklearn.ensemble import RandomForestRegressor
 from preprocess.preprocess import load_and_preprocess
 from utils.evaluations import evaluate
 
@@ -20,16 +19,16 @@ from utils.evaluations import evaluate
 X, y, X_test, test_ids = load_and_preprocess()
 
 # 파라미터 로딩
-with open("data/best_params_catboost.json") as f:
+with open("best_params/best_params_catboost.json") as f:
     best_params_cat = json.load(f)
 best_params_cat["random_seed"] = 42
 best_params_cat["logging_level"] = "Silent"
 
-with open("data/best_params_lgb.json") as f:
+with open("best_params/best_params_lgb.json") as f:
     best_params_lgb = json.load(f)
 best_params_lgb["random_state"] = 42
 
-with open("data/best_params_xgb.json") as f:
+with open("best_params/best_params_xgb.json") as f:
     best_params_xgb = json.load(f)
 best_params_xgb["random_state"] = 42
 

@@ -58,7 +58,7 @@ print(f"튜닝 소요 시간: {elapsed_time:.2f}초")
 print("Best RMSLE:", study.best_value)
 print("Best Parameters:", study.best_params)
 
-with open("data/best_params_catboost.json", "w") as f:
+with open("best_params/best_params_catboost.json", "w") as f:
     json.dump(study.best_params, f, indent=4)
 
 print("\u2705 저장 완료:", study.best_params)
